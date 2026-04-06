@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="QueueFlow User Dashboard - Track your queue position">
+  <title>QueueFlow — My Queue</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👤</text></svg>">
+</head>
+<body>
+  <!-- Animated Background -->
+  <div class="bg-animation">
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div class="orb"></div>
+  </div>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-inner">
+      <a href="/" class="logo">
+        <div class="logo-icon">📋</div>
+        <span class="logo-text">QueueFlow</span>
+      </a>
+      <div class="header-actions">
+        <div class="notification-bell" id="notifBell" onclick="toggleNotifications()">
+          🔔
+          <span class="bell-count" id="notifCount" style="display:none;">0</span>
+        </div>
+        <div class="user-badge">
+          <div class="avatar" id="userAvatar">U</div>
+          <span id="userName">User</span>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="logout()">
+          🚪 Logout
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Dashboard -->
+  <div class="dashboard">
+    <!-- Tabs -->
+    <div class="tabs" id="mainTabs">
+      <button class="tab-btn active" onclick="switchTab('join')">📝 Join Queue</button>
+      <button class="tab-btn" onclick="switchTab('myqueue')">📊 My Position</button>
+      <button class="tab-btn" onclick="switchTab('view')">👁️ View Queue</button>
+    </div>
+
+    <!-- Tab 1: Join Queue -->
+    <div class="tab-content active" id="tab-join">
+      <div class="join-queue-section slide-up">
+        <div class="glass-card" style="padding:2rem;">
+          <h2 style="text-align:center;margin-bottom:0.5rem;">
+            <span class="text-gradient">Join a Queue</span>
+          </h2>
+          <p style="text-align:center;color:var(--text-secondary);margin-bottom:2rem;font-size:0.9rem;">
+            Fill in your visit details to get in line
+          </p>
+          <form id="joinQueueForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Department *</label>
+                <select class="form-select" id="joinDepartment" required>
+                  <option value="">Select Department</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Institution *</label>
+                <select class="form-select" id="joinInstitution" required>
+                  <option value="">Select Institution</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Purpose of Visit</label>
+              <input type="text" class="form-input" id="joinPurpose" placeholder="e.g., Annual checkup, Consultation...">
+            </div>
+            <button type="submit" class="btn btn-accent btn-lg" style="width:100%;" id="joinBtn">
+              🚀 Join Queue
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 2: My Position -->
+    <div class="tab-content" id="tab-myqueue">
+      <div id="myQueueEntries">
+        <!-- Dynamically filled -->
+      </div>
+      <div class="empty-state" id="noQueueMsg" style="display:none;">
+        <div class="empty-icon">🕐</div>
+        <h3>Not in any queue yet</h3>
+        <p>Join a queue from the "Join Queue" tab to see your position here.</p>
+      </div>
+    </div>
+
+    <!-- Tab 3: View Queue (only joined queues) -->
+    <div class="tab-content" id="tab-view">
+      <!-- Header -->
+      <div class="toolbar fade-in">
+        <div class="toolbar-left">
+          <h2>My Active Queues <span class="badge badge-accent" id="viewQueueCount">0</span></h2>
+        </div>
+        <div class="toolbar-right">
+          <span style="color:var(--text-secondary);font-size:0.85rem;">Showing only queues you've joined</span>
+        </div>
+      </div>
+
+      <!-- Queue Cards -->
+      <div class="queue-grid" id="viewQueueGrid">
+        <div class="loader" id="viewLoader">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detail Modal -->
+  <div class="modal-overlay" id="detailModal">
+    <div class="glass modal">
+      <button class="modal-close" onclick="closeModal('detailModal')">✕</button>
+      <h2><span class="text-gradient">Queue Entry Details</span></h2>
+      <div class="detail-grid" id="detailGrid"></div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="/js/user.js"></script>
+</body>
+</html>

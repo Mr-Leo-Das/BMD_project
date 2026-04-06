@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="QueueFlow Admin Dashboard - Manage queues and operations">
+  <title>QueueFlow — Admin Dashboard</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
+</head>
+<body>
+  <!-- Animated Background -->
+  <div class="bg-animation">
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div class="orb"></div>
+  </div>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-inner">
+      <a href="/" class="logo">
+        <div class="logo-icon">📋</div>
+        <span class="logo-text">QueueFlow <span style="color:var(--primary-light);font-size:0.75rem;font-weight:500;">ADMIN</span></span>
+      </a>
+      <div class="header-actions">
+        <div class="user-badge">
+          <div class="avatar" id="adminAvatar">A</div>
+          <span id="adminName">Administrator</span>
+        </div>
+        <button class="btn btn-ghost btn-sm" id="logoutBtn" onclick="logout()">
+          🚪 Logout
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Dashboard -->
+  <div class="dashboard">
+    <!-- Stats Row -->
+    <div class="stats-row slide-up" id="statsRow">
+      <div class="glass-card stat-card purple">
+        <div class="stat-icon">👥</div>
+        <div class="stat-value" id="statWaiting">0</div>
+        <div class="stat-label">In Queue</div>
+      </div>
+      <div class="glass-card stat-card teal">
+        <div class="stat-icon">✅</div>
+        <div class="stat-value" id="statServed">0</div>
+        <div class="stat-label">Served Today</div>
+      </div>
+      <div class="glass-card stat-card green">
+        <div class="stat-icon">🏥</div>
+        <div class="stat-value" id="statDepts">0</div>
+        <div class="stat-label">Active Depts</div>
+      </div>
+      <div class="glass-card stat-card red">
+        <div class="stat-icon">⏱️</div>
+        <div class="stat-value" id="statAvgWait">0m</div>
+        <div class="stat-label">Avg Wait</div>
+      </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar fade-in">
+      <div class="toolbar-left">
+        <h2>Queue Management <span class="badge badge-primary" id="queueCount">0</span></h2>
+      </div>
+      <div class="toolbar-right">
+        <div class="filter-group">
+          <select class="form-select" id="filterDepartment" onchange="loadQueue()">
+            <option value="">All Departments</option>
+          </select>
+          <select class="form-select" id="filterInstitution" onchange="loadQueue()">
+            <option value="">All Institutions</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" id="addQueueBtn" onclick="showAddModal()">
+          ➕ Add to Queue
+        </button>
+      </div>
+    </div>
+
+    <!-- Queue Cards Grid -->
+    <div class="queue-grid" id="queueGrid">
+      <div class="loader" id="queueLoader">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add/Edit Modal -->
+  <div class="modal-overlay" id="addEditModal">
+    <div class="glass modal">
+      <button class="modal-close" onclick="closeModal('addEditModal')">✕</button>
+      <h2 id="modalTitle"><span class="text-gradient">Add to Queue</span></h2>
+      <form id="queueForm">
+        <input type="hidden" id="editId" value="">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Full Name *</label>
+            <input type="text" class="form-input" id="formName" placeholder="Patient name" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone</label>
+            <input type="tel" class="form-input" id="formPhone" placeholder="+91 98765 43210">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-input" id="formEmail" placeholder="email@example.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Age</label>
+            <input type="number" class="form-input" id="formAge" placeholder="25" min="1" max="150">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Gender</label>
+            <select class="form-select" id="formGender">
+              <option value="">Select Gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Department *</label>
+            <select class="form-select" id="formDepartment" required>
+              <option value="">Select Department</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Institution *</label>
+            <select class="form-select" id="formInstitution" required>
+              <option value="">Select Institution</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Purpose</label>
+            <input type="text" class="form-input" id="formPurpose" placeholder="Consultation, Checkup...">
+          </div>
+        </div>
+        <div style="display:flex;gap:1rem;margin-top:1rem;">
+          <button type="submit" class="btn btn-primary btn-lg" style="flex:1;" id="formSubmitBtn">
+            ➕ Add to Queue
+          </button>
+          <button type="button" class="btn btn-ghost btn-lg" onclick="closeModal('addEditModal')">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Detail Modal -->
+  <div class="modal-overlay" id="detailModal">
+    <div class="glass modal">
+      <button class="modal-close" onclick="closeModal('detailModal')">✕</button>
+      <h2><span class="text-gradient">Patient Details</span></h2>
+      <div class="detail-grid" id="detailGrid"></div>
+      <div style="display:flex;gap:1rem;margin-top:1.5rem;justify-content:center;" id="detailActions"></div>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal-overlay" id="deleteModal">
+    <div class="glass modal" style="max-width:400px;">
+      <div class="confirm-dialog">
+        <div class="confirm-icon">⚠️</div>
+        <h3>Remove from Queue?</h3>
+        <p>This will mark the patient as served and remove them from the active queue.</p>
+        <div class="confirm-actions">
+          <button class="btn btn-danger" id="confirmDeleteBtn" onclick="confirmDelete()">Yes, Remove</button>
+          <button class="btn btn-ghost" onclick="closeModal('deleteModal')">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="/js/admin.js"></script>
+</body>
+</html>
